@@ -52,7 +52,7 @@ cat("Significant p-values after Benjamini-Hochberg correction:", sum(p_values_bh
 
 # Define the content of the script as a string
 script_content <- "
-# Your R script content goes here
+
 "
 
 # Specify the path to the file where you want to save the script
