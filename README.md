@@ -1,46 +1,84 @@
-# CHR6 SNP Analysis
+# SNP Allele Frequency Analysis with Multiple Testing Correction
 
-## Exploring Genetic Variation in Chromosome 6
+This repository presents an end-to-end workflow for statistical analysis of SNP (Single Nucleotide Polymorphism) genotype data. The project applies binomial tests to detect deviations from expected allele frequencies, corrects for multiple testing using Bonferroni and Benjamini-Hochberg methods, and visualizes the p-value distributions to identify significant variants.
 
-### Introduction
+## Project Overview
 
-This project focuses on the analysis of genomic data extracted from the Stanford HGDP SNP Genotyping Database, specifically targeting chromosome 6 (chr6) in individuals of European descent (H938 Euro). The primary objective is to examine genetic variation and population structure using computational and statistical methods.
+The objective is to identify SNPs on **Chromosome 6** that exhibit significant deviation in allele frequencies from an expected 0.5 proportion. The analysis includes:
 
-### Why This Study is Important
+- Calculating allele counts per SNP
+- Performing binomial tests
+- Applying multiple testing correction (Bonferroni, BH)
+- Visualizing p-value distributions and significant SNPs
+- Generating quality control plots like QQ-plots and scatter plots
 
-Understanding genetic variation in chromosome 6 is critical for exploring its role in disease susceptibility, immune system function, and evolutionary patterns. SNPs within this chromosome are known to be associated with autoimmune disorders and other complex diseases. By applying statistical and computational methods, we aim to identify meaningful genetic patterns and potential disease-linked SNPs.
+## Key Objectives
 
-### Workflow
+- Perform allele frequency analysis using binomial tests  
+- Apply multiple testing correction (Bonferroni & Benjamini-Hochberg)  
+- Visualize raw and adjusted p-value distributions  
+- Filter and report highly significant SNPs for downstream interpretation  
 
-![_- visual selection](https://github.com/user-attachments/assets/024e9bcc-d76f-4c48-829c-ebe70bd1796c)
+## Input Files
 
-### Results
+| File                             | Description                                      |
+|----------------------------------|--------------------------------------------------|
+| `H938_Euro_chr6.geno`            | Genotype count data for SNPs on Chromosome 6     |
+| `p_values_adjusted.csv`         | Output from R containing raw & adjusted p-values |
 
-After applying multiple testing corrections to the dataset:
+## Pipeline Summary
 
-1. 38,805 SNPs were significant before correction.
+### Step 1: Allele Frequency Analysis in R
+- Read genotype matrix with counts: `nA1A1`, `nA1A2`, `nA2A2`
+- Calculate A1 allele counts and total alleles
+- Perform binomial test for each SNP (null: p = 0.5)
+- Apply Bonferroni and BH corrections
+- Save results to `p_values_adjusted.csv`
 
-2. 32,196 SNPs remained significant after Bonferroni correction.
+### Step 2: Visualization in Python
+- Load the corrected p-value table
+- Generate:
+  - Histogram of p-values
+  - Scatter plot: Raw vs Adjusted p-values
+  - QQ-plot for uniformity
+- Summarize significant SNPs by thresholds
 
-3. 38,562 SNPs remained significant after the Benjamini-Hochberg correction.
+## Key Visualizations
 
-4. When applying a stricter threshold (p < 1e-5), 33,126 SNPs were retained.
+### 1. Histogram of Raw and Adjusted P-Values  
+Illustrates the skew in raw vs corrected significance distribution.
+<img width="902" alt="Screenshot 2025-04-21 at 9 44 57 PM" src="https://github.com/user-attachments/assets/0df953a1-6cba-4204-8fa9-c3bfc6292379" />
 
-### Discussion
+### 2. Scatter Plot: Raw vs Adjusted  
+Shows the magnitude of correction by Bonferroni and BH.
+<img width="856" alt="Screenshot 2025-04-21 at 9 55 49 PM" src="https://github.com/user-attachments/assets/91f0fa4d-9bce-481f-8170-469d0fcb9895" />
 
-The large number of significant SNPs suggests that chromosome 6 contains multiple regions of interest, potentially linked to disease-associated genes. The Benjamini-Hochberg correction retained most of the SNPs, allowing for further investigation while controlling the false discovery rate. In contrast, the Bonferroni correction, being highly conservative, removed a substantial number of SNPs, potentially eliminating true positives.
+### 3. QQ Plot  
+Evaluates the uniformity of raw p-values under the null hypothesis.
+<img width="535" alt="Screenshot 2025-04-21 at 9 56 07 PM" src="https://github.com/user-attachments/assets/79778c52-7c13-4cb6-a7ed-cd171cdcef74" />
 
-### Conclusion
+## Summary Stats
 
-The analysis confirms that chromosome 6 harbors significant genetic variation that may be relevant for further functional and disease-related studies. However, additional validation using external datasets (e.g., GWAS, ClinVar) is required to confirm the biological significance of these findings.
+| Metric                           | Count   |
+|----------------------------------|---------|
+| Total SNPs analyzed              | ~43,141 |
+| Raw significant SNPs (p < 0.05)  | 38,805  |
+| Bonferroni significant SNPs      | 32,196  |
+| BH adjusted significant SNPs     | 38,562  |
+| Highly significant (p < 1e-5)    | 33,126  |
 
-### Future Steps
+## Tools Used
 
-1. Functional Annotation of SNPs – Mapping significant SNPs to known genes and regulatory elements.
+- **R**: `binom.test`, `p.adjust`, `write.csv`
+- **Python**: `pandas`, `matplotlib`, `seaborn`, `scipy.stats`
+- **Statistical Tests**: Binomial test, Bonferroni & BH correction
 
-2. Validation with External Datasets – Comparing results with GWAS and ClinVar to identify disease-associated SNPs.
+## Applications & Impact
 
-3. Pathway Analysis – Investigating whether identified SNPs are enriched in known biological pathways.
+- Identifying candidate SNPs for GWAS or eQTL studies  
+- Demonstrating robust statistical testing across large-scale genomic data  
+- Teaching reproducibility and visualization in statistical genomics
 
-4. Machine Learning for Prioritization – Using computational models to rank SNPs based on their potential biological impact.
+## License
 
+MIT License
